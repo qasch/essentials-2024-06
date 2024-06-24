@@ -1,0 +1,46 @@
+= Übungen zu Variablen
+
+== 1. Variablenzuweisung
+
+a) Erstelle eine Variable namens `name` und weise ihr deinen eigenen Namen zu.
+
+b) Gib den Wert der Variable `name` auf der Konsole aus.
+
+== 2. Mathematische Operationen mit Variablen
+
+a) Erstelle zwei Variablen `zahl1` und `zahl2` und weise ihnen beliebige Zahlenwerte zu.
+
+b) Führe eine Addition der beiden Variablen durch und speichere das Ergebnis in einer neuen Variable namens `summe`.
+
+c) Gib den Wert der Variablen `summe` auf der Konsole aus.
+
+== 3. Verwendung von Umgebungsvariablen
+
+a) Gib den Wert der Umgebungsvariable `HOME` auf der Konsole aus. Diese Variable enthält den Pfad zum Home-Verzeichnis des aktuellen Benutzers.
+
+b) Erstelle eine Variable namens `mein_home` und weise ihr den Wert der Umgebungsvariable `HOME` zu.
+
+c) Gib den Wert der Variable `mein_home` auf der Konsole aus.
+
+== 4. Verkettung von Variablen
+
+a) Erstelle eine Variable namens `vorname` und weise ihr deinen Vornamen zu.
+
+b) Erstelle eine Variable namens `nachname` und weise ihr deinen Nachnamen zu.
+
+c) Erstelle eine Variable namens `voller_name` und verkette den Wert der Variablen `vorname` und `nachname` mit einem Leerzeichen dazwischen.
+
+d) Gib den Wert der Variable `voller_name` auf der Konsole aus.
+
+== 5. Kombination von Variablen und Text
+
+a) Erstelle eine Variable namens `stadt` und weise ihr den Namen deiner Lieblingsstadt zu.
+
+b) Erstelle eine Variable namens `land` und weise ihr den Namen des Landes zu, in dem deine Lieblingsstadt liegt.
+
+c) Gib einen Satz aus, der sowohl die Variable `stadt` als auch `land` enthält, z.B. "Meine Lieblingsstadt ist [stadt] und sie liegt in [land]."
+
+== 6. Variablen und Subshells
+
+a) Erstelle eine Variable mit dem Namen `foo` und weise ihr den Wert "bar" zu. Öffne nun eine Subshell, indem du das Kommando `bash` eingibst. Lass dir nun den Inhalt der Variabla `foo` ausgeben. Steht dort immer noch "bar" drin? Was ist passiert? Wie kann die Variable `foo` auch in sämtlichen Subshells verfügbar gemacht werden?
+
