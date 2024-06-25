@@ -1,0 +1,92 @@
+= Dokumentation Linux Essentials
+:toc:
+
+== Hilfe auf der Kommandozeile
+
+* Option `<kommanod> --help`
+* Manpages `man <kommando>`: gibt es in der Regel nur für _extern_ realisierte Kommandos, nicht für _Builtins_ (z.B. `cd`, `export`, `alias` usw.)
+* `help <builtin>` zeigt die Hifle Seite für Builtins (in die Shell eingebaute Kommandos) an
+* `help` Liste aller Builtins
+* `type <kommanod>` zeigt die Art eines Kommandos an: extern, Builtin, Alias etc.
+* Zusatzinfo: Info System: `info <kommando>` zeigt die Info-Seite eines Kommandos an. Info Seiten sind noch ausführlicher als die Manpages, gibt es aber nicht für alle Kommandos, muss mit `apt install info` installiert werden
+
+== Autocompletion
+
+Mit der TAB-Taste können Pfade, Kommandos, Optionen usw. automatisch vervollständigt werden. Gibt es mehrere Möglichkeiten zur Vervollständigung, kann man zweimal die TAB-Taste drücken und erhält eine Übersicht über die verschiedenen Möglichkeiten.
+
+== Sonderzeichen und Escaping
+
+* In der BASH gibt es bestimmte Sonderzeichen, welche nicht als reguläre Satzzeichen interpretiert werden, sonder eine Sonderbedeutung haben.
+* Eins der wichtigsten Sonderzeichen ist das Leerzeichen/Space, dies ist das *Trennzeichen*, hiermit erkennt die Shell z.B. was eine Kommando ist, was eine Option, was ein Argument usw.
+* Wollen wir ein Sonderzeichen als reguläres Satzzeichen darstellen ohne Sonderbedeutung, so müssen wir dieses Zeichen _maskieren_ bzw. _escapen_:
+* die doppelten Anführungszeichen `"` escapen alle Sonderzeichen bis auf das `$` (Substitution)
+* die einfachen Sonderzeichen `'` escapen sämtliche Sonderzeichen
+* der Backslash `\` maskiert das direkt darauffolgende Zeichen
+* einige Sonderzeichen: 
+** `<kommanod1> ; <kommando2>`: beide Kommandos werden nacheinander ausgeführt, unabhängig, ob sie erfolgreich waren oder nicht 
+** `<kommando1> && <kommando2>`: `<kommando2>` wird nur dann ausgeführt, wenn `<kommando1>` *erfolgreich ausgeführt* werden konnte
+** `<kommando1> || <kommando2>`: `<kommando2>` wird nur dann ausgeführt, wenn `<kommando1>` *nicht erfolgreich ausgeführt* werden konnte
+** `~`: Abkürzung für das Heimatverzeichnis des aktuellen Benutzers
+** `$`: Substitution/Ersetzung, z.B.: `$var` `$(kommando)` `$(( berechnung ))`
+** `#`: Leitet einen Kommentar ein
+** `*`: Globbing Character (Asterisk) - steht für ein beliebiges Zeichen, dass beliebig oft vorkommen darf (auch kein Mal)
+** `?`: Globbing Character - steht für ein beliebiges Zeichen, dass exakt einaml vorkommt
+
+== Subshells
+
+Eine Shell, die innerhalb einer anderen Shell geöffnet wird. Passiert relativ oft, ohne dass wir es direkt merken, z.B. bei der Kommandosubstitution, beim Aufruf von Funktionen in Skripten usw. Eine Subshell ist abhängig von der Elternshell. Wird die Elternshell geschlossen, werden gleichzeitig auch alle Subshells geschlossen.
+
+== Variablen
+
+* es gibt zwei Arten von Variablen: 
+** *Shellvariablen*: sind nur in der aktuellen Shell gültig
+** *Umgebungsvariablen*: sind in allen Shells gültig (werden komplett in Großbuchstaben geschrieben [Konvention]), müssen in bestimmten Dateien konfiguriert werden (z.B. `~/.bashrc`, `~/.profile` etc.)
+* mit dem Kommado `export` kann eine Shellvariable auch in Subshells verfügbar gemacht werden
+
+== Arithmetische Operationen / Rechnen in der Shell
+
+* Möchte man in der Shell (mit Variablen) rechnen, kann dies auf zwei Weisen erfolgen:
+
+----
+$(( ausdruck ))
+
+summe = $(( zahl1 + zahl2))
+----
+
+oder:
+
+----
+let summe = zahl1 + zahl2
+----
+
+Hilfe dazu findet sich in der Manpage der BASH (Suche z.B. nach _arithmetic_ in der englischen Version)
+
+== History
+
+Jedes Kommando wird in der History der Shell gespeichert. Bei der BASH ist es z.B. die Datei `~/.bash_history`. Mit dem Kommando `history` kann eine Liste dieser Kommandos angezeigt werden. Jedes Kommando hat einen Index `<index>`. 
+
+Ein bestimmtes Kommando kann folgendermaßen erneut aufgerufen werden:
+
+ !<index>
+
+Ansonsten können mit den Cursor (Pfeil nach oben) oder mittels STRG+P die zuletzt eingegebenen Kommandos aufgerufen werden.
+
+Andere nützliche History-Shortcuts:
+
+* `!!` das komplette zuletzt eingegebene Kommando (z.B. `sudo !!` um das letzte Kommando erneut mit Root-Rechten auszuführen)
+* `!?` das letzte Argument des zuletzt ausgeführten Kommandos:
+
+----
+ls -l /some/folder/somewhere/in/path
+chown -R tux:tux !$
+----
+
+
+
+
+
+
+
+
+
+
