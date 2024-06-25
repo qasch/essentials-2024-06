@@ -1,0 +1,132 @@
+= Übungen zu Text Streams und Filter
+
+== Aufgabe 1
+
+. Ermittelt über das `/proc` Dateisystem die Anzahl der Prozessoren eures Rechners.
+
+. Benutzt dazu die Kommandos `grep` und `wc`.
+
+. Benutzt dazu die Kommandos `sed` und `wc`.
+
+== Aufgabe 2
+
+. Untersucht eure `/etc/passwd` Datei mit den Kommandos `sed`, `grep`, `head` und `tail`.
+
+. Welche Benutzer haben Zugang zu einer BASH Shell?
+
+. Wie viele Systembenutzer existieren auf eurem System?
+
+. Wie viele Benutzer und primäre Gruppen existieren auf eurem System?
+
+. Lasst euch jeweils nur die erste, letzte und die zehnte Zeiel der Datei `/etc/passwd` anzeigen. Nutzt dafür `sed`.
+
+== Aufgabe 3
+
+. Erstellt eine Kopie der Datei `/etc/passwd` mit dem Namen `~/mypasswd` auf eurem System mit folgendem Inhalt:
+
+----
+root:x:0:0:root:/root:/bin/bash
+daemon:x:1:1:daemon:/usr/sbin:/usr/sbin/nologin
+bin:x:2:2:bin:/bin:/usr/sbin/nologin
+sys:x:3:3:sys:/dev:/usr/sbin/nologin
+sync:x:4:65534:sync:/bin:/bin/sync
+nvidia-persistenced:x:121:128:NVIDIA Persistence Daemon,,,:/nonexistent:/sbin/nologin
+libvirt-qemu:x:64055:130:Libvirt Qemu,,,:/var/lib/libvirt:/usr/sbin/nologin
+libvirt-dnsmasq:x:122:133:Libvirt Dnsmasq,,,:/var/lib/libvirt/dnsmasq:/usr/sbin/nologin
+carol:x:1000:2000:Carol Smith,Human Resources,,,Main Office:/home/carol:/bin/bash
+dave:x:1001:1000:Dave Edwards,Human Resources,,,Main Office:/home/dave:/bin/ksh
+emma:x:1002:1000:Emma Jones,Human Resources,,,Main Office:/home/emma:/bin/bash
+frank:x:1003:1000:Frank Cassidy,Human Resources,,,Main Office:/home/frank:/bin/bash
+grace:x:1004:1000:Grace Kearns,Engineering,,,Main Office:/home/grace:/bin/ksh
+henry:x:1005:1000:Henry Adams,Accounts Payable,,,Main Office:/home/henry:/bin/bash
+john:x:1006:1000:John Chapel,Accounts Payable,,,Main Office:/home/john:/bin/bash
+----
+
+. Lasst euch alle Benutzer in der Gruppe 1000 anzeigen. Nutzt dafür `sed`.
+
+. Lasst euch nur die vollen Namen der Benutzer in dieser Gruppe anzeigen (mit `sed` und `cut`).
+
+== Aufgabe 4
+
+. Benutzt erneut die Datei `mypasswd`. Ihr sollt nun unter allen Mitgliedern des _Main Office_ einen Sieger für eine Tombola ermitteln.
+
+. Benutzt `sed` um die Mitglieder des Main Office zu ermitteln, sorgt dafür, dass euch nur die Vornahmen angezeigt werden und sortiert diese anschliessend zufällig. Lasst euch nun nur die erste Zeile ausgeben und ihr habt euren Gewinner.
+
+== Aufgabe 5
+
+. Wieviele Leute arbeiten jeweills in _Human Resources_, _Engineering_ und _Accounts Payable_? Versucht, die Lösung mit einem einzigen Kommando zu ermitteln. Eventuell ist ja das Kommando `uniq` hier hilfreich.
+
+== Aufgabe 6
+
+. Wir wollen nun eine CSV (_Comma Seperated Values_) Datei mit dem Namen `persons.csv` aus der Datei `mypasswd` erstellen. Die Datei soll folgendes Format haben:
+
+Beachtet, dass hier das Komma `,` das Trennzeichen zwischen den Spalten ist.
+
+Nutzt dafür die Kommandos `sed`, `cut`, `tr` und `paste`. Erstellt also drei Dateien
+für die entsprechenden Spalten der CSV Datei und fügt diese anschliessend zusammen.
+
+. *Zusatzaufgabe:* Löst nun obige Aufgabe in nur einer Zeile.
+
+== Aufgabe 7
+
+. Da es sich bei der erstellten CSV Datei um ein höchst wichtiges Dokument handelt, wollt ihr es mit einer Prüfsumme versehen, so dass ihr erkennen könnt, falls jemand den Inhalt der Datei ändert.
+
+. Erstellt nun jeweils eine Datei mit der jeweiligen Prüfsumme für die Algorithmen `md5sum`, `sha256sum` und `sha512sum`. Prüft anschliessend, wie sich die Prüfsumme ändert, sobald ihr eine Änderung an der Datei vornehmt. Ihr könnt hier auch das Programm `diff` verwenden.
+
+== Aufgabe 8
+
+. Ihr wollt jeden Tag exakt 100 Zeilen des Buchs _Mariner and Mystic_ von Herman Melville lesen. Dazu besorgt ihr euch eine Kopie des Buchs von https://gutenberg.org und teilt es anschliessend mit dem Programm `split` in Dateien von je 100 Zeilen.
+
+Ihr könnt das Buch mit folgendem Kommando herunterladen (eventuell müsst ihr dazu `wget` installieren):
+
+----
+wget https://www.gutenberg.org/files/50461/50461-0.txt
+----
+
+Kontrolliert anschliessend mit dem Kommando `nl`, ob ihr alles so funktioniert hat, wie es sollte.
+
+== Aufgabe 9
+
+. Wenn ihr euch mit `ls -l` die Dateien unter `/etc` anschaut und versucht, hier mit `cut` bestimmte Spalten auszuschneiden und miteinander zu kombinieren, euch also z.B. nur den Namen der Datei und dessen Besitzer anzeigen zu lassen, werdet ihr seltsame Ergebnisse bekommen.
+
+Der Grund dafür ist, dass abhängig von der Grösse der Datei oder dem Änderungsdatum mehrere Leerzeichen aufeinander folgen.
+
+Probiert es einmal aus!
+
+Mit dem Kommando `tr` können mitunter mehrere direkt aufeinanderfolgende gleiche Zeichen zu einem Zeichen komprimiert werden.
+
+----
+$ ls -l /etc | tr -s ' ' ,
+drwxr-xr-x,3,root,root,4096,out,24,16:58,acpi
+-rw-r--r--,1,root,root,3028,dez,17,2018,adduser.conf
+-rw-r--r--,1,root,root,10,out,2,17:38,adjtime
+drwxr-xr-x,2,root,root,12288,out,31,09:40,alternatives
+-rw-r--r--,1,root,root,401,mai,29,2017,anacrontab
+-rw-r--r--,1,root,root,433,out,1,2017,apg.conf
+drwxr-xr-x,6,root,root,4096,dez,17,2018,apm
+drwxr-xr-x,3,root,root,4096,out,24,16:58,apparmor
+drwxr-xr-x,9,root,root,4096,nov,6,20:20,apparmor.d
+
+
+# -s komprimiert aufeinanderfolgende Leerzeichen zu einem einzigen
+# dieses ersetzen wir mit einem Komma ,
+# letzeres kann auch entfallen:
+
+$ ls -l /etc | tr -s ' '
+drwxr-xr-x 3 root root 4096 out 24 16:58 acpi
+-rw-r--r-- 1 root root 3028 dez 17 2018 adduser.conf
+-rw-r--r-- 1 root root 10 out 2 17:38 adjtime
+drwxr-xr-x 2 root root 12288 out 31 09:40 alternatives
+-rw-r--r-- 1 root root 401 mai 29 2017 anacrontab
+-rw-r--r-- 1 root root 433 out 1 2017 apg.conf
+drwxr-xr-x 6 root root 4096 dez 17 2018 apm
+drwxr-xr-x 3 root root 4096 out 24 16:58 apparmor
+----
+
+Ermittelt so:
+
+. nur die Dateinamen
+
+. die Dateinamen gefolgt von dessen Besitzer (in dieser Reihenfolge)
+
+. lediglich alle Verzeichnisse und dessen Besitzer
