@@ -1,0 +1,133 @@
+#+TITLE: Übungen zu Regulären Ausdrücken
+#+SETUPFILE: https://fniessen.github.io/org-html-themes/org/theme-readtheorg.setup
+# #+OPTIONS: num:nil
+
+* Reguläre Ausdrücke
+
+a) Welcher Reguläre Ausdruck passt auf jede E-Mail Adresse wie =info@example.org=?
+
+# #+BEGIN_SRC
+# egrep "\S+@\S+\.\S+"
+# #+END_SRC
+
+b) Welcher Reguläre Ausdruck passt auf IPv4 Adressen der Form =192.168.15.1=?
+
+# #+BEGIN_SRC
+# egrep "[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}"
+# #+END_SRC
+
+c) Wie kann mit dem  Kommando =grep= die Datei =/etc/serives= angeszeigt werden,
+aber ohne Kommentarzeilen?
+
+# #+BEGIN_SRC
+# grep -v ^# /etc/services
+# #+END_SRC
+
+d) Die Datei =domains.txt= enthält eine Liste von Domain Namen, einen pro Zeile.
+Wie kann man =egrep= ausschliesslich =.org= und =.com= Domänen anzeigen?
+
+# #+BEGIN_SRC
+# egrep ".org$|.com$" domains.txt
+# #+END_SRC
+
+e) Wie kann man, ausgehend vom aktuellen Verzeichnis, mit dem Kommando =find=
+alle Dateien anzeigen, die keinen Standard Suffix haben. Also alle die, die
+nicht auf =.txt=, =.c=, =.pdf= etc. enden? Nutzt dafür einen Erweiterten
+Regulären Ausdruck.
+
+# #+BEGIN_SRC
+# find . -type f -regextype egrep -not -regex '.*\.[[:alnum:]]{1,}$'
+# #+END_SRC
+
+* grep und sed
+
+a) Das Kommando =last= zeigt eine Liste der zuletzt angemeldetetn Benutzer. Wie
+kann man mit dem Kommando =egrep= die Ausgabe von =last= so filtern, dass nur
+nur die Ausgaben mit IPv4 Adressen angezeigt werden ohne zusätzliche
+Informationen in der entsprechenden Zeile?
+
+# #+BEGIN_SRC
+# last -i | egrep -o '[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}'
+# #+END_SRC
+
+b) Welche Option sollte an =grep= übergeben werden, um die Ausgabe zu filtern,
+die mit dem Kommando =find= und der Option =-print0= generiert wurde?
+
+# #+BEGIN_SRC
+# The option -z or --null-data, as in find . -print0 | grep -z expression.
+# #+END_SRC
+
+c) Das Kommando =uptime -s= zeigt das Datum, an dem das System das letzte Mal
+gestartet wurde, z.B. =2020-11-02 8:15:10=. Was ist wohl die Ausgabe des
+Kommandos =uptime -s | sed -e 's/(.*) (.*)/\1/'=?
+
+# #+BEGIN_SRC
+# An error will occur. By default, parenthesis should be escaped to use backreferences in sed.
+# #+END_SRC
+
+
+d) Die Grundstruktur einer HTML Datei startet mit den Elementen =html=, =head=
+und =body=:
+
+#+BEGIN_SRC
+<html>
+<head>
+  <title>News Site</title>
+</head>
+<body>
+  <h1>Headline</h1>
+  <p>Information of interest.</p>
+</body>
+</html>
+#+END_SRC
+
+d.1) Wie kann man sich mit dem Kommando =sed= ausschliesslich die =body=
+Elemente inklusive Inhalt anzeigen lassen?
+
+# #+BEGIN_SRC
+# To only show body, the addresses should be /<body>/,/<\/body>/, as in sed -n -e '/<body>/,/<\/body>/p'. Option -n is given to sed so it doesn’t print lines by default, hence the command p at the end of sed expression to print matching lines.
+# #+END_SRC
+
+d.2) Welches =sed= Kommando entfernt alle HTML Tags aus dem HTML Dokument, aber
+nicht den eigentlichen Text/Inhalt?
+
+# #+BEGIN_SRC
+# The sed expression s/<[^>]*>//g will replace any content enclosed in <> by an empty string.
+# #+END_SRC
+
+e) Dateien mit der Erweiterung =.ovpn= werden genutzt, um VPN Clients zu
+konfigurieren. Sie enthalten dabei nicht nur die Konfiguration an sich, sondern
+auch die Schlüssel und Zertifikate für den Client. Diese befinden sich
+normalerweise in seperaten Dateien und müssen in die =.ovpn= Datei kopiert
+werden.
+
+Gegeben ist folgendes =.ovpn= Template:
+
+#+BEGIN_SRC
+client
+dev tun
+remote 192.168.1.155 1194
+<ca>
+ca.crt
+</ca>
+<cert>
+client.crt
+</cert>
+<key>
+client.key
+</key>
+<tls-auth>
+ta.key
+</tls-auth>
+#+END_SRC
+
+Angenommen, die Dateien =files ca.crt=, =client.srt=, =client.key= und =ta.key=
+befinden sich im aktuellen Verzeichnis. Wie kann man mit =sed= den Inhalt der
+Dateien in das =.ovpn= Template kopieren, also dort jeden Dateinamen durch deren
+Inhalt ersetzen?
+
+# #+BEGIN_SRC
+# sed -r -e 's/(^[^.]*)\.(crt|key)$/cat \1.\2/e' < client.template > client.ovpn
+
+# # replaces any line terminating in .crt or .key with the content of a file whose name equals the line. Option -r tells sed to use extended regular expressions, whilst e at the end of the expression tells sed to replace matches with the output of command cat \1.\2. The backreferences \1 and \2 correspond to the filename and extension found in the match.
+# #+END_SRC
