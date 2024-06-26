@@ -81,12 +81,103 @@ ls -l /some/folder/somewhere/in/path
 chown -R tux:tux !$
 ----
 
+== Brace Expansion
 
+* `touch file_{001..100}.txt` erstellt 100 Dateien mit den Namen `file_001.txt` bis `file_100.txt`
+* `ls *.{txt,pdf}` zeigt alle `txt` und `pdf` Dateien an
 
+== Konfigurationsdateien
 
+* Systemweite Konfigurationsdateien: liegen immer unter `/etc`, sind für alle Benutzer gültig (z.B. `/etc/bash.bashrc`)
+* Benutzerspezifische Konfigurationsdateien: liegen immer im Heimatverzeichnis des Benutzers, beginnen immer mit einem Punkt (`.`) oder liegen in einem Verzeichnis, das mit einem Punkt beginnt (z.B. `~/.bashrc`, `~/.config/htop`)
+* Einträge in den benutzerspezifischen Konfigurationsdateien überschreiben ggf. Einträge aus der systemweiten
+* So können Bentzer selbst gewisse Einstellungen vorhnehmen ohne Root-Rechte haben zu müssen, z.B. Aliase erstellen, die BASH konfigurieren...
 
+== Textströme 
 
+== UNIX-Philosophie
 
+1. Schreibe Programme so, dass sie *eine* Aufgabe erledigen, und diese gut machen
+2. Schreibe Programme so, dass sie zusammenarbeiten
+3. Schreibe Programme so, dass sie Textströme verarbeiten, denn Text ist eine universelle Schnittstelle
 
+== Standardkanäle 
+
+- Standardeingabekanal - `stdin` - Kanalnr. 0
+- Standardausgabekanal - `stdout` - Kanalnr. 1
+- Standardfehlerkanal - `stderr` - Kanalnr. 2
+
+== Redirect
+
+Mit einem Redirect kann ein Datenstrom in eine *Datei* umgeleitet werden.
+
+- `>` Mit einem _einfachen_ Redirect wird der Standardausgabekanal oder der Standardfehlerkanal in eine Datei umgeleitet. Die Datei muss vorher nicht existiert haben, sie wird ggf. erzeugt. Eine bereits bestehende Datei wird zuerst geleert/der Inhalt gelöscht und anschließend mit dem Inhalt des Datenstroms beschrieben.
+
+ ls /etc 1> ausgabe_ls.txt     # stdout(1) in datei
+ ls /etc > ausgabe_ls.txt     # stdout(1) in datei
+
+ ls /gibtsnicht 2> fehler_ls.txt     # stderr(2) in datei
+
+- `>>` Mit einem _doppelten_ (anhängenden) Redirect wird der Inhalt des Datenstroms (`stdout` oder `stderr`) an eine bereits bestehende Datei angehängt. Eine nicht existierende Datei würde erzeugt werden.
+- `&>` So werden sowohl `stdout` als auch `stderr` in eine Datei umgeleitet
+
+ ls /etc /gibtsnicht &> ausgabe_und_fehler.txt
+
+`sterr` wird in `stdout` umgeleteitet und dann `stdout` in datei
+das `&1` ist nötig, damit der Shell klar ist, dass der Kanal 1 gemeint ist
+ansonsten würde die Datei `1` erstellt werden
+
+ ls /etc /gibtsnicht > ausgabe_und_fehler.txt 2>&1    
+
+- `<` Mit dem umgedrehten Redirect kann der Inhalt einer Datei an den Eingabekanal eines Kommandos geleitet werden
+
+ mail -s Mail_Subject empfaenger@mail.example < mailinhalt.txt
+
+== Pipe
+
+Mit der Pipe `|` wird der Ausgabekanal eines Kommandos an den Eingabekanal eines weiteren Kommandos umgeleitet.
+
+- `<Kommando1> | <kommando2>`
+
+ ls -l /etc | less
+ grep alias ~/.bashrc | grep -v `#`
+
+== Filterkommandos
+
+Wir nutzen Filterkommandos um aus einem Textstrom den Inhalt zu herauszufiltern, den wir haben wollen 
+
+=== grep
+
+Alle Zeilen anzeigen, die das Pattern `alias` enthalten. Es wird immer die gesamte Zeile ausgegeben in der das Pattern vorkommt.
+
+ grep 'alias' ~/.bashrc
+
+Gesamten Inhalt der Datei `~/.bashrc` anzeigen, Kommentarzeilen *nicht* mit ausgeben
+
+ grep -v `#` ~/.bashrc 
+
+- `grep -i <pattern>`: Gross- und Kleinschreibung von `<pattern>` ist egal
+- `grep -n <pattern>`: Anzeige der Zeilennummer, in der `<pattern>` gefunden wurde
+- `grep -r <pattern> dir/`: Rekursive Suche, so kann über alle Dateien in einem Verzeichnis _gegrept_ werden
+- `grep -v <pattern>`: _inVert match_: Ausgabe wird _invertiert_, also nur die Zeilen ausgegeben, in denen `<pattern>` *nicht* vorkommt
+- `grep -c <pattern>`: gibt nicht die Zeilen aus, sondern nur die Anzahl der Zeilen in denen `<pattern>` vorkommt
+
+=== cut
+
+Mit `cut` können wir Spalten/Felder/_Fields_ aus tabellarisch aufgebauten Dateien _ausschneiden_ bzw. filtern. Die wichtigen Optionen für `cut` sind `-d` zur Angabe des Trennzeichens (_Delimiter_) und `-f` zur Angabe der Spalte (_Field_). Bsp.:
+
+Ausschließlich die Login-Namen anzeigen lassen:
+
+ cut -d: -f1 /etc/passwd
+
+=== weitere Filterkommandos
+
+- `tr`: übersetzt ein Zeichen in einem Textstrom (es können keine Dateien als Argument übergeben werden) in ein anderes/löscht dieses etc... 
+
+ tr a A < datei.txt  # wandelt jedes kleine a in ein grosses A um
+
+- `wc`: gibt die Anzahl der Zeilen, Wörter und Bytes einer Datei an 
+
+ wc -l /etc/passwd`  # Anzahl Zeilen der Datei /etc/passwd
 
 
