@@ -1,0 +1,26 @@
+= Übungen zu tar und Komprimierung
+
+== Vorbereitungen
+
+Erstellt euch (falls nicht vorhanden) die folgenden Verzeichnisse mit dazugehörigem Inhalt. Die Dateien können leer sein. Oder ihr nutzt das Kommando `dd`, um Dateien mit einer bestimmten Größe zu erstellen:
+
+Datei mit Namen `image1.img` mit einer Größe von 100M erstellen:
+
+ dd if=/dev/zero of=image1.img bs=1M count=100
+
+* `Dokumente`: test.txt, doc1.txt, doc2.txt
+* `Bilder`: image1.img, image2.jpeg, image3.svg, image4.img
+  * Ändert die Modifizierungszeit der Dateien `image1.img` und `image3.svg` mit dem Kommando `touch` auf den 01.01.2022, 0:00: `touch -t 202201010000 image1.img`.
+* `Files`: irgendwas.txt, soeinzeugs.txt, geheim.doc, privat.pdf
+
+== Übungen
+
+1. Erstelle ein tar-Archiv mit dem Namen `archive.tar` aus dem Verzeichnis `Dokumente`.
+3. Wechsel in das Verzeichnis `/tmp`. Extrahiere alle Dateien aus dem Archiv `archive.tar` in dieses Verzeichnis.
+2. Erstelle ein tar-Archiv mit dem Namen `bilder.tar.gz` aus dem Verzeichnis `Bilder` und komprimiere es mit Gzip.
+2. Extrahiert den Inhalt des Verzeichnisses `bilder.tar.gz` in das Verzeichnis `/opt` in einem Schritt.
+6. Zeige den Inhalt eines tar-Archivs `archive.tar` an, ohne es zu extrahieren.
+4. Extrahiere nur die Datei `test.txt` aus dem Archiv `archive.tar`.
+5. Erstelle ein tar-Archiv mit dem Namen `files.tar` aus dem Verzeichnis `Files` und schließe die Dateien `geheim.doc` und `privat.pdf` aus.
+7. Füge die Datei `neu.txt` zu dem bestehenden tar-Archiv `files.tar` hinzu.
+10. Erstelle ein `xz`-komprimiertes tar-Archiv mit dem Namen `backup.tar.xz` aus dem Verzeichnis `Files` und schließe alle Dateien aus, die das Wort `geheim` im Dateinamen enthalten. Nutz dafür ein einzelnes `tar` Kommando, ohne in einem weiteren Schritt `xz` zu benutzen.
