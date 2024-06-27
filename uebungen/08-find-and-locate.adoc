@@ -1,0 +1,25 @@
+= Übungen zu find und locate
+
+== Find
+
+a) Ermittelt alle Dateien, die eurem Benutzer gehören.
+
+b) Ermittelt alle Dateien, die vor weniger als 12 Stunden geändert wurden.
+
+c) Ermittelt alle Dateien, die vor mehr als 2 Tagen erstellt wurden.
+
+d) Ermittelt die Anzahl der Dateien auf dem System, die grösser als 1 MB sind.
+
+e) Ermittelt alle Dateien auf dem System, die zwischen 40B und 1 MB gross sind.
+
+f) Kopiert alle Dateien in eurem Heimatverzeichniss, die jünger als 1 Tag sind in das Verzeichnis `juenger-als-ein-tag`
+
+g) Findet alle leeren Datein in eurem Heimatverzeichniss, die älter als 2 Tage sind.
+
+h) Macht die Berechtigungen für eure Nextcloud Installation kaputt, mit dem Kommando `sudo chmod -R 777 /var/www/nextcloud`. Repariert anschliessend die Berechtigungen, so dass alle Verzeichnisse die Standardberechtigungen `0755` erhalten und alle Dateien die Berechtigungen `0644`.
+
+== Locate
+
+a) `README` ist ein sehr populärer Dateiname. Gebt alle absoluten Pfadnamen aller Dateien an, die `README` heissen.
+
+b) Sucht mit `locate` alle `.tar` Dateien in eurem Heimatverzeichniss. Erstellt nun die Datei `neu.tar` und sucht erneut. `locate` wird euch diese Datei nicht anzeigen. Welches Kommando müsst ihr ausführen, damit ihr die neu erstellte Datei findet?
