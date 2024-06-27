@@ -1,0 +1,302 @@
+= Regular Expressions
+:toc:
+
+Reguläre Ausdrücke bestehen aus Zeichenfolgen, die ein Muster bilden, mit welchem zutreffende Zeichenfolgen in einem Textabschnitt gefunden werden können.
+
+* Reguläre Ausdrücke bestehen aus mindestens einem _Atom_
+* ein _Atom_ ist ein einzelnes Zeichen mit oder ohne Sonderbedeutung
+* Zeichen mit Sonderbedeutung sind z.B.
+** `.`: passt auf jedes Zeichen
+** `^`: passt auf den Anfang einer Zeile (_anchor_)
+** `$`: passt auf das Ende einer Zeile (_anchor_)
+
+Beispiele:
+* `bc` passt auf `abcd`, aber nicht auf `a1cd`
+* `.c` passt sowohl auf `abcd`, als auch auf `a1cd`
+* `^cd` passt nicht auf `abcd`
+* `$ab` passt nicht auf `abcd`
+* `^` hat nur eine Sonderbedeutung wenn es am Anfang steht
+  reguläres Zeichen
+* `$` hat nur eine Sonderbedeutung wenn es am Ende steht
+
+== Bracket Expansion
+
+* eine Liste von Zeichen innerhalb von `[]` (insgesamt auch ein _Atom_, obwohl
+  mehr als ein Zeichen)
+* das Atom passt also auf jedes einzelne der Zeichen
+  * `[1b]` passt sowohl auf `abcd` als auch auf `a1cd`
+* es können auch Zeichen ausgeschlossen werden mit `^`
+* aber nur, wenn es am Anfang steht: `[^1b]`: `1` oder `b` passen also nicht
+* es können auch Bereiche angegeben werden:
+** `[0-9]` passt auf alle Ziffern
+** `[a-z]` passt auf alle Kleinbuchstaben
+* weiterhin gibt es Zeichenklassen:
+** `[:alnum:]` Represents an alphanumeric character
+** `[:alpha:]` Represents an alphabetic character
+** `[:ascii:]` Represents a character that fits into the ASCII character set
+** `[:blank:]` Represents a blank character, that is, a space or a tab
+** `[:cntrl:]` Represents a control character
+** `[:digit:]` Represents a digit (0 through 9)
+** `[:graph:]` Represents any printable character except space
+** `[:lower:]` Represents a lowercase character
+** `[:print:]` Represents any printable character including space
+** `[:punct:]` Represents any printable character which is not a space or an alphanumeric character.
+** `[:space:]` Represents white-space characters: space, form-feed (\f), newline (\n), carriage return (\r), horizontal tab (\t), and vertical tab (\v)
+** `[:upper:]` Represents an uppercase letter
+** `[:xdigit:]` Represents hexadecimal digits (0 through F)
+* Zeichenklassen können mit einzelnen Zeichen und Bereichen kombiniert werden
+* dürfen aber nicht am Ende eines Bereichs stehen
+* sie dürfen nur innerhalb der Brackt Expansion genutzt werden, nicht aber
+  ausserhalb der Klammern
+
+== Quantifiers
+
+* hiermit kann die _Reichweite_ eines Atoms gesteuert werden
+* es wird so eine _Atom Sequence_ definiert, also eine Wiederholung bestimmter Zeichen
+* Quantifiers haben eine unterschiedliche Bedeutung, je nach genutztem Standard
+** POSIX definiert zwei Arten von RegEx: _basic_ und _extended_
+
+[cols="1,1,1,1"]
+|===
+|Quantifier |basic |extended |literale Bedeutung     
+
+| `*`        
+| beliebig oft                                 
+| beliebig oft      
+| am Anfang oder nach `\`
+
+| `+`        
+| literale Bedeutung wenn nicht nach einem `\` 
+| mindestens 1 mal  
+| wenn nicht nach `\`     
+
+| `?`        
+| literale Bedeutung wenn nicht nach einem `\` 
+| ein oder kein mal 
+| wenn nicht nach `\`     
+|===
+
+== Bounds
+
+* erlaubt die Angabe einer exakten Anzahl:
+** `{i}`: das Atom muss exakt _i_ mal vorkommen
+**** `[:blank:]{2}` passt auf exakt zwei Leerzeichen
+** `{i,}`: dass Atom muss mindestens _i_ mal vorkommen
+*** `[:blank:]{2,}` passt auf exakt mindestens Leerzeichen
+** `{i,j}`: mindestens _i_ mal und maximal _j_ mal
+*** `xyz{2,4}` passt auf `xy` gefolgt von vier `z` Zeichen
+*** `[xyz]{2,4}` passt auf `xy` gefolgt von vier `z` Zeichen
+* passt sowohl ein kurzer als auch ein lange Substring wird der lange gewählt
+* in Basic RegEx müssen die Delimiter hinter einem `\` stehen:
+** `\{` und `\}`
+* ansonsten reguläre Zeichen
+* wenn auf `\{` ein anderes Zeiche als ein Integer folgt, ist es nicht der
+  Beginn eines Bounds, wird also literal gedeutet
+
+== Branches
+
+* Extended RegEx können in sogenannte _Branches_ unterteilt werden
+* jeder _Branch_ ist ein unabhängiger RegEx
+* Unterteilung mit `|`
+* der so kombinierte RegEx passt auf alles was auf eine der Branches passt
+** `he|him` passt also sowohl auf den Substring `he` als auch auf `him`
+* bei regulären RegEx ist `|` ein normales Zeichen
+* allerdings versetehen die meisten Programme mit regulären RegEx auch Branches durch `\|`
+* wenn eine erweiterte RegEx in `()` eingeschlossen ist, handelt es sich um eine sogenannte _back reference_
+* darin eingeschlossene Ausdrücke können wiederverwendet werden:
+** `([a-c])x\1x\1` passt also auf `axaxa`, `bxbxb` und `cxcxc`
+
+
+== Suche mit Regulären Ausdrücken
+
+== find
+
+ $ find $HOME -regex '.*/\..*' -size +100M
+
+* sucht nach Dateien, die grösser sind als 100 MB
+* aber nur innerhalb des Heimatverzeichnisses des aufrufenden Benutzers
+* und in Verzeichnissen, die ein Match zu `.*/\..*` enthalten
+* also ein `/.` umgeben von irgendwelchen anderen Zeichen
+* sprich: nur versteckte Dateien oder Dateien innerhalb versteckter Verzeichnisse
+** unabhängig von der Position von `/.` im dazugehörigen Pfad
+* für ein Case Insensitive Suche kann `-iregex` benutzt werden
+
+----
+$ find /usr/share/fonts -regextype posix-extended -iregex '.*(dejavu|liberation).*sans.*(italic|oblique).*'
+/usr/share/fonts/dejavu/DejaVuSansCondensed-BoldOblique.ttf
+/usr/share/fonts/dejavu/DejaVuSansCondensed-Oblique.ttf
+/usr/share/fonts/dejavu/DejaVuSans-BoldOblique.ttf
+/usr/share/fonts/dejavu/DejaVuSans-Oblique.ttf
+/usr/share/fonts/dejavu/DejaVuSansMono-BoldOblique.ttf
+/usr/share/fonts/dejavu/DejaVuSansMono-Oblique.ttf
+/usr/share/fonts/liberation/LiberationSans-BoldItalic.ttf
+/usr/share/fonts/liberation/LiberationSans-Italic.ttf
+----
+
+* hier werden Branches genutzt, um bestimmte Schriftarten im Verzeichnis
+  `/usr/share/fonts` zu finden
+* bei `find` muss die Unterstützung für erweiterte Reguläre Ausdrücke
+  eingeschaltet werden:
+** mit `-regextype posix-extended` oder `-regextype egrep`
+* standard für `find` ist `findutils-default`, also ein Basic Regular Expression Klon
+
+== less
+
+* auch hier können RegEx verwendet werden
+* sinnvoll z.B. bei der Suche nach Optionen:
+** `^\[ [:blank:] ]*-o`` oder einfacher: `^ *-o` springt direkt zur Optin `-o`
+
+== grep
+
+----
+$ grep '^options' /etc/modprobe.d/alsa-base.conf
+options snd-pcsp index=-2
+options snd-usb-audio index=-2
+options bt87x index=-2
+options cx88_alsa index=-2
+options snd-atiixp-modem index=-2
+options snd-intel8x0m index=-2
+options snd-via82xx-modem index=-2
+----
+
+* bracket expression to select lines from fdisk -l output, starting with Disk /dev/sda or Disk /dev/sdb:
+
+----
+# fdisk -l | grep '^Disk /dev/sd[ab]'
+Disk /dev/sda: 320.1 GB, 320072933376 bytes, 625142448 sectors
+Disk /dev/sdb: 7998 MB, 7998537728 bytes, 15622144 sectors
+----
+
+* wenn im Zusammenhang mit `find` ist die Option `-H` hilfreich
+* diese zeigt auch den Dateinamen mit an
+* standardmässig aktiv, aber nur bei rekursiver Suche
+* `-c -100` limitiert die Ausgabe von `cut` auf 100 Spalten
+
+----
+$ find /usr/share/doc -type f -exec grep -i '3d modeling' "{}" \; | cut -c -100
+artistic aspects of 3D modeling. Thus this might be the application you are
+This major approach of 3D modeling has not been supported
+oce is a C++ 3D modeling library. It can be used to develop CAD/CAM softwares, for instance [FreeCad
+
+$ find /usr/share/doc -type f -exec grep -i -H '3d modeling' "{}" \; | cut -c -100
+/usr/share/doc/openscad/README.md:artistic aspects of 3D modeling. Thus this might be the applicatio
+/usr/share/doc/opencsg/doc/publications.html:This major approach of 3D modeling has not been support
+----
+
+* mit `-C 1` oder `-1` werden auch die vorausgehende und nachfolgende Zeile angezeigt:
+
+----
+$ find /usr/share/doc -type f -exec grep -i -H -1 '3d modeling' "{}" \; | cut -c -100
+/usr/share/doc/openscad/README.md-application Blender), OpenSCAD focuses on the CAD aspects rather t
+/usr/share/doc/openscad/README.md:artistic aspects of 3D modeling. Thus this might be the applicatio
+/usr/share/doc/openscad/README.md-looking for when you are planning to create 3D models of machine p
+/usr/share/doc/opencsg/doc/publications.html-3D graphics library for Constructive Solid Geometry (CS
+/usr/share/doc/opencsg/doc/publications.html:This major approach of 3D modeling has not been support
+/usr/share/doc/opencsg/doc/publications.html-by real-time computer graphics until recently.
+----
+
+* `egrep` ist `grep -E` extended
+* `fgrep` ist `grep -F` keine RegEx
+
+* Branching:
+
+----
+$ find /usr/share/doc -type f -exec egrep -i -H -1 '3d (modeling|printing)' "{}" \; | cut -c -100
+/usr/share/doc/openscad/README.md-application Blender), OpenSCAD focuses on the CAD aspects rather t
+/usr/share/doc/openscad/README.md:artistic aspects of 3D modeling. Thus this might be the applicatio
+/usr/share/doc/openscad/README.md-looking for when you are planning to create 3D models of machine p
+/usr/share/doc/openscad/RELEASE_NOTES.md-* Support for using 3D-Mouse / Joystick / Gamepad input dev
+/usr/share/doc/openscad/RELEASE_NOTES.md:* 3D Printing support: Purchase from a print service partne
+/usr/share/doc/openscad/RELEASE_NOTES.md-* New export file formats: SVG, 3MF, AMF
+/usr/share/doc/opencsg/doc/publications.html-3D graphics library for Constructive Solid Geometry (CS
+/usr/share/doc/opencsg/doc/publications.html:This major approach of 3D modeling has not been support
+/usr/share/doc/opencsg/doc/publications.html-by real-time computer graphics until recently.
+----
+
+== sed
+
+----
+$ factor `seq 12`
+1:
+2: 2
+3: 3
+4: 2 2
+5: 5
+6: 2 3
+7: 7
+8: 2 2 2
+9: 3 3
+10: 2 5
+11: 11
+12: 2 2 3
+----
+
+* Deleting the first line with sed is accomplished by 1d:
+
+----
+$ factor `seq 12` | sed 1d
+2: 2
+3: 3
+4: 2 2
+5: 5
+6: 2 3
+7: 7
+8: 2 2 2
+9: 3 3
+10: 2 5
+11: 11
+12: 2 2 3
+----
+
+A range of lines can be specified with a separating comma:
+
+----
+$ factor `seq 12` | sed 1,7d
+8: 2 2 2
+9: 3 3
+10: 2 5
+11: 11
+12: 2 2 3
+----
+
+More than one instruction can be used in the same execution, separated by semicolons. In this case, however, it is important to enclose them with parenthesis so the semicolon is not interpreted by the shell:
+
+----
+$ factor `seq 12` | sed "1,7d;11d"
+8: 2 2 2
+9: 3 3
+10: 2 5
+12: 2 2 3
+----
+
+In this example, two deletion instructions were executed, first on lines ranging from 1 to 7 and then on line 11. An address can also be a regular expression, so only lines with a match will be affected by the instruction:
+
+----
+$ factor `seq 12` | sed "1d;/:.*2.*/d"
+3: 3
+5: 5
+7: 7
+9: 3 3
+11: 11
+----
+
+The regular expression :2.* matches with any occurrence of the number 2 anywhere after a colon, causing the deletion of lines corresponding to numbers with 2 as a factor. With sed, anything placed between slashes (/) is considered a regular expression and by default all basic RE is supported. For example, sed -e "/^#/d" /etc/services shows the contents of the file /etc/services without the lines beginning with # (comment lines).
+
+The delete instruction d is only one of the many editing instructions provided by sed. Instead of deleting a line, sed can replace it with a given text:
+
+----
+$ factor `seq 12` | sed "1d;/:.*2.*/c REMOVED"
+REMOVED
+3: 3
+REMOVED
+5: 5
+REMOVED
+7: 7
+REMOVED
+9: 3 3
+REMOVED
+11: 11
+REMOVED
+----
+
+The instruction c REMOVED simply replaces a line with the text REMOVED. In the example’s case, every line with a substring matching the regular expression :.*2.* is affected by instruction c REMOVED. Instruction a TEXT copies text indicated by TEXT to a new line after the line with a match. The instruction r FILE does the same, but copies the contents of the file indicated by FILE. Instruction w does the opposite of r, that is, the line will be appended to the indicated file.
