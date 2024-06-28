@@ -180,4 +180,117 @@ Ausschließlich die Login-Namen anzeigen lassen:
 
  wc -l /etc/passwd`  # Anzahl Zeilen der Datei /etc/passwd
 
+== Nach Dateien suchen
+
+=== locate
+
+Die Suche mit `locate` ist im Vergleich zu `find` sehr schnell, da `locate` eine Datenbank zur Suche nutzt bzw. alle Dateien auf dem System vorher mit dem Tool `updatedb` durchsucht und in dieser Datenbank indiziert werden.
+
+`updatedb` wird in der Regel einmal pro Tag automatisch durch `cron` ausgeführt. 
+
+Dadurch ist die Suche sehr schnell, neu erstellte Dateien werden aber unter Umständen nicht gefunden. In dem Fall kann `updatedb` auch manuell mit Root Rechten ausgeführt werden.
+
+Alle README Dateien im gesamten System finden:
+
+ locate README
+
+Alle Dateien, die `tar` im Namen haben finden:
+
+ locate tar
+
+Alle Dateien, die auf `tar` enden finden:
+
+ locate "*.tar"
+
+Die Suche mit `locate` ist schnell aber nicht besonders fein einstellbar.
+
+=== find
+
+- Suche nach Dateien, Verzeichnissen etc. auf Dateisystemebene
+- die Suche kann sehr fein eingestellt werden
+- es kann z.B. nach folgenden Kriterien gesucht werden:
+  - Dateien
+  - Verzeichnisse
+  - Benutzer
+  - Berechtigungen
+  - Alter/Zugriffszeit
+  - Grösse
+  - etc.
+- Optionen werden in der Langschreibweise mit nur einem einzelnen Minuszeichen angegeben (UNIX Syntax)
+- es können beliebig viele Tests kombiniert werden um die Suche zu verfeinern:
+
+Das foldende Kommando sucht im gesamten Dateisystem nach allen regulären Dateien mit der Endung `.jpg` auf die vor mehr als 5 Minuten zugegriffen wurde:
+
+ find / -name "*.jpg" -type f -amin +5
+
+- mit der Option `-exec` können Kommandos auf die einzelnen Suchergebnisse angewandt werden. Folgendes Kommando löscht alle regulären Dateien, die grösser als 50G sind und dem Benutzer `tux` gehören:
+
+ find / -type f -size +50G -user tux -exec rm {} \; 
+
+Alle regulären Dateien löschen, die grösser als 50G sind und dem Benutzer `tux` gehören:
+
+ find / -type f -size +50G -user tux -delete
+
+=== xargs
+
+Die Ausführung von Kommandos über `-exec` kann unter Umständen recht lange dauern, da `find` für jedes Suchergebniss einen einzelnen Prozess startet.
+
+Mit dem  Kommando `xargs` kann diese Ausführung beschleunigt werden, da `xargs` mehrere Suchergebnisse in einem einzelnen Prozess ausführen kann. Bei der Kombination mit `find` muss hier aber auf etwas geachtet werden. 
+
+Enthält der Dateiname Leerzeichen, würde `xargs` dies als ein Trennzeichen betrachten und somit versuchen ein Kommando nur auf einen Teil des Dateinamens anzuwenden, was natürlich zu einem Fehler führt. Um dies zu umgehen, sorgt man dafür, das `find` Leerzeichen durch ein _Nullbyte_ ersetzt (über die Option `-print0`). Nun muss man aber auch `xargs` darüber unterrichten, d.h. zusätzlich muss `xargs` die Option `-0` übergeben werden:
+
+ find / -type f -size +50G -user tux -print0 | xargs -0 rm 
+
+== Prozesse
+
+Ein Prozess ist ein sich in der Auführung befindliches Programm. Ein Programm resultiert immer in mindestens einem Prozess. Prozesse laufen jeweils in einem von anderen unabhängigen "Resourcenraum", haben eine eigene _PID_, kennen nur die _PID_ des Prozesses, von dem sie gestartet wurden (Elternprozess). Prozesse können mit dem Kommando `kill` über _Signale_ beeinflusst werden.
+
+Wird der Elternprozess beendet, so werden (in der Regel) gleichzeitig alle Kindprozesse mit beendet.
+
+Auf der Shell kann immer nur ein einzelner Prozess im _Vordergrund_ ausgeführt werden. Prozesse können mit der Tastenkomnination `STRG+Z` angehalten und in den Hintergrund geschickt werden. Mit dem Kommando `bg` kann dieser Prozess dann im Hintergund fortgesetzt werden, `fg` holt den Prozess in den Vordergrund zurück. 
+
+Wir können einen Prozess beim Start aber auch direkt in den Hintergrund schicken und starten (duch Anhängen eines `&`):
+
+ kommando &
+
+- `ps -aux`: Anzeige aller laufende Prozessez
+- `ps -ef`: auch Anzeige aller laufenden Prozesse
+- `ps --forest`: Prozesshirarchie (Baumstruktur) anzeigen
+- `jobs`: Anzeigen der Hintergrundprozesse
+- `fg`: letzten/aktuellen/default Job in den Vordergrund holen
+- `fg %<jobnummer>`: Job mit Jobnummer `<jobnummer>` in den Vordergrund holen
+- `bg`: Hintergrundprozess fortsetzen
+- `bg %<jobnummer>`: Hintergrundprozess mit Jobnummer `<jobnummer>` in fortsetzen
+
+== kill
+
+`kill` sendet Signale an Prozesse. Es muss die PID des Prozesses angegeben werden, Prozessname funktioniert nicht.
+
+- `kill -s <signal> <PID>`: sendet <signal> an den Prozess mit der PID <PID>
+- `kill -<signal> <PID>`: sendet <signal> an Prozess mit der PID <PID>
+
+Die PID eines Prozesses kann auf mehrere Arten ermittelt werden:
+
+ ps -ef | grep <prozessname>
+ pgrep <prozessname>
+ ...
+
+=== einige wichtige Signale
+
+- `SIGTERM` (15): Standard, falls kein bestimmtes Signal angegeben wird. Sendet eine "freundliche" Aufforderung an den Prozess, sich doch bitte zu beenden. Im Prozess selbst ist festgelegt, wie er sich beendet, z.B. werden noch gewisse Aufräumarbeiten durchgeführt etc.
+- `SIGINT` (2): sendet eine etwas deutlichere Aufforderung an den Prozess, sich zu beenden, wird bei der Tastenkomnination `STRG+C` (_Cancel_) gesendet
+- `SIGKILL` (9): rabiateste Methode, Signal wird nicht an den Prozess, sondern direkt an den Scheduler gesendet, der daraufhin den entsprechenden Prozess aus seiner Liste löscht, der Prozess somit keine CPU Zeit mehr zur Verfügung gestellt bekommt und somit zwangsläufig beendet wird.
+- `SIGSTOP` (19): hält Prozess an und schickt ihn in den Hintergrund (`STRG+Z`)
+- `SIGCONT` (18): startet angehaltene Prozesse
+
+=== pkill und killall
+
+- `pkill`: analog zu oben, `pkill` erwartet aber den Namen bzw. einen Teil des Namens eines Prozesses anstatt der PID. Falls mehere Prozesse auf den Namen passen, wird das Signal an *alle* diese Prozesse gesendet.
+- `killall` auf neueren Distributionen nicht mehr vorhanden, ähnliches Verhalten wie `pkill`
+
+
+
+
+
+
 
