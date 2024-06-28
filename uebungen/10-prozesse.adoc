@@ -1,0 +1,47 @@
+= Übungen zu Prozessen
+
+== 1. Anzeige von Prozessen
+
+Verwendet das Kommando `ps` mit entsprechenden Optionen um euch:
+
+a) alle Prozesse in der aktuellen Shell anzeigen zu lassen 
+
+b) alle Prozesse in der allen Shells des aufrufenden Benutzers anzeigen zu lassen 
+
+c) alle auf dem System laufenden Prozesse anzuzeigen
+
+== 2. Vordergrund und Hintergrund
+
+Startet einen Prozess `sleep 200` und verwendet `kill` 
+
+a) um den Prozess aus einer anderen Shell heraus zu beenden.
+
+b) um den Prozess in den Hintergrund zu schicken
+
+c) um den Prozess im Hintergrund weiter auszuführen
+
+Versucht dabei, `kill` in jeder möglichen Syntax auszuführen.
+
+Startet einen Prozess `sleep 300` so, dass er in den Hintergrund verschoben wird, dort aber nicht angehalten, sondern weitere ausgeführt wird.
+
+== 3. Prozesse ermitteln und beenden
+
+Installiert für die folgende Übunng den Webserver `apache2` mit dem Kommanod `apt install apache2` auf eurem System (als `root`).
+
+1) Ermittelt nun alle Prozesse, die vom Apache2 erzeugt (_gespawnt_) werden. Nutzt dafür zwei verschiedene Kommandos.
+
+2) Nutzt das Kommando `ps` um euch alle Prozesse des Systembenutzers (`www-data`) des `apache2` anzeigen zu lassen. Probiert hier alle Screibweisen (Unix, BSD und Linux) aus.
+
+3) Beendet alle laufenden Prozesse des `apache2`, ohne dabei vorher "händisch" deren PIDs ermitteln zu müssen. Macht auch dies mit zwei unterschiedlichen Kommandos.
+
+== 4. top und ps
+
+1) Macht euch etwas mit dem Kommando `top` vertraut. Was wird denn zusätzlich zu den Prozessen angezeigt?
+
+2) `top` sortiert die Ausgabe standardmäßig nach prozentualer CPU Auslastung in absteigender Reihenfolge. Dieses Verhalten kann interaktiv (also während `top` läuft) beeinflusst werden. Probiert es aus, indem ihr während `top` läuft die Taste `h` drückt. So wird euch eine Hilfe angezeigt.
+
+3) Man kann `top` aber auch durch die Angabe von Optionen (`top -o <option(en)>`) beim Start zu einer gewünschten Ausgabe überreden. Startet `top` so, dass alle Prozesse nach Auslastung des Hauptspeichers sortiert werden.
+
+4) Die Option `o` gibt es auch für `ps`. Damit kann man sich hier bestimmte Spalten anzeigen lassen. Startet `ps` so, dass nur Informationen über den Benutzer, prozentuale Auslastung des Hauptspeichers, prozentuale Auslastung der CPU und das komplette Kommando angezeigt werden.
+
+5) Startet `ps` nun so, dass lediglich der Benutzer und das Kommando angezeigt werden.
