@@ -1,0 +1,74 @@
+= Übungen zu User Accounts und Gruppen
+
+== Benutzer und Gruppen
+
+=== Benutzer erstellen
+
+Erstellt einen neuen Benutzer `karl` nach folgenden Kriterien:
+
+[cols="1,1"]
+|===
+| Benutzername      
+| karl 
+
+| Voller Name       
+| Karl Gustav
+
+| Heimatverzeichnis 
+| eigenes Heimatverzeichnis mit Standarddateien 
+
+| Shell             
+| BASH als Login Shell 
+|===
+
+Erstellt einen weiteren Benutzer `lisa` nach folgenden Kriterien:
+  
+[cols="1,1"]
+|===
+| Benutzername      
+| `lisa`                                                                            
+| Voller Name       
+| Lisa Lanze                                                                       
+
+| Heimatverzeichnis 
+| eigenes Heimatverzeichnis mit Standarddateien unter `/home/lanze` (Achtug: nicht `/home/lisa`)
+
+| Shell             
+| ZSH als Login Shell (Installiert dazu zuerst die Shell `zsh` mit dem Kommando `apt install zsh`)
+|===
+
+Sorgt ausserdem dafür, dass ihr euch als diese Benutzer anmelden könnt.
+
+Erstellt nun einen Pseudobenutzer `moppel` nach folgenden Kriterien:
+
+[cols="1,1"]
+|===
+| Benutzername      
+| `moppel`                                                                         
+
+| Voller Name       
+| Moppel Hoppel                                                                     
+| Heimatverzeichnis 
+| eigenes Heimatverzeichnis mit Namen `moppeldir` unter `/opt/` (ohne Standarddateien)
+
+| UID               
+| 444                                                          
+|===
+
+Versucht, euch als Benutzer `moppel` am System anzumelden.
+
+== Passwörter
+
+c) *[Zusatzaufgabe]* Wie könnt ihr dafür sorgen, dass ein neu angelegter Benutzer (z.B. `karl`) sich zwar am System anmelden kann, ihr selbst aber (später) keine Kenntnis über sein Passwort habt? Eventuell hilft euch dabei ein Blick in die Manpage von `chage`.
+
+== Benutzer sperren
+
+d) Sperrt nun den Benutzer `karl`. Ihr sollt also dafür sorgen, dass er sich nicht mehr am System anmelden kann. Werft dazu einen Blick in die Manpage von `usermod`. Überprüft anschließend, ob dies auch wirklich nicht mehr möglich ist. Was passiert in den entsprechenden Dateien? Wo ändert sich was? Untersucht dazu die Dateien `/etc/passwd`, `/etc/group/` und `/etc/shadow`. Ensperrt den Benutzer `karl` anschließend wieder. Beobachtet auch hier, was passiert.
+
+== Gruppen
+
+e) Erstellt eine neue Gruppe `gfn` und weist `karl` und `lisa` dieser Gruppe zu. Konsultiert dazu die Manpages von `groupadd` und `usermod`. Weist `karl` zusätzlich der Gruppe `adm` zu. Überprüft anschließend, welche Gruppenzugehörigkeiten diese beiden Benutzer haben.
+
+f) Versucht die Gruppe `gfn` zu löschen. Klappt das?
+
+g) Löscht den Benutzer `karl` inklusive seines Heimatverzeichnisses. Sind anschließend in jedem Fall alle Dateien, die `karl` "gehören" entfernt?
