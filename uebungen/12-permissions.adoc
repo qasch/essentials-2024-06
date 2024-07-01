@@ -1,0 +1,81 @@
+= Übungen zu Dateiberechtigungen
+
+Falls ihr den Benutzer `karl` bei der vorherigen Übung gelöscht habt, erzeugt ihn wieder neu:
+
+* Login: `karl`
+* Comment: `Karl Gustav`
+* eigenes Heimatverzeichnis mit Standarddateien
+* BASH als Login Shell
+* Passwort
+
+== Übung 1
+
+a) Erstellt eine neue Datei in eurem Heimatverzeichnis mit dem Namen `script.sh`
+
+a.1) Sorgt nun dafür, dass die Datei die folgenden Berechtigungen erhält:
+
+* Der Besitzer darf die Datei *lesen* und *schreiben*
+* Mitglieder der Gruppe der Datei dürfen die Datei nur *lesen*
+* Alle anderen haben *keine* Zugriffsrechte auf die Datei
+
+a.2) Öffnet die Datei nun mit einem Editor und fügt folgenden Inhalt hinzu:
+
+----
+#!/bin/bash
+echo Ich bin ein Script!
+----
+
+a.3) Ihr habt nun ein Script erstellt. Versucht es mit folgendem Kommando auszuführen:
+
+----
+./script.sh
+----
+
+Ihr solltet nun eine Fehlermeldung erhalten. Welches Recht könnte hier fehlen?
+Fügt der Datei das entsprechende Recht hinzu und versucht sie erneut auszuführen.
+
+b) Ändert die Gruppenzugehörigkeit der Datei, so dass sie der Gruppe `users`
+zugeordnet ist.
+
+b.1) Fügt nun einen anderen Benutzer (z.B.) `karl` der Gruppe `users` hinzu.
+Sorgt anschliessend dafür, dass auch `karl` diese Datei ausführen kann, ohne den
+Besitzer der Datei zu ändern.
+
+b.2) Entfernt nun das Leserecht für die Gruppe. Kann `karl` das Script nun noch
+ausführen? Warum oder warum nicht?
+
+c) Setzt nun (mit dem kürzesten Kommando) folgende Berechtigungen auf die
+Datei:
+
+* Besitzer darf *schreiben* und *lesen*
+* Gruppe darf *lesen* und *ausführen*
+* alle anderen dürfen die Datei nur *lesen*
+
+c.1) Fügt euren Benutzer der Gruppe `users` hinzu. Was passiert, wenn ihr (als
+euer _regulärer Benutzer_, also nicht `karl`) versucht, das Script auszuführen
+(mit `./script.sh`)? Warum?
+
+== Übung 2
+
+Erstellt eine Datei mit Namen `confidential.txt` mit dem Inhalt `Ganz doll geheim` in eurem Heimatverzeichnis. Setzt die Berechtigungen so, dass ausschließlich ihr den Inhalt der Datei lesen und bearbeiten könnt.
+
+== Übung 3
+
+Erstellt ein Verzeichnis `shared` unter `/srv` und sorgt dafür, dass alle Benutzer, die der Gruppe `users` zugeordnet sind, dort Dateien erstellen/löschen, lesen und bearbeiten können, aber niemand sonst.
+
+Erstellt dazu testweise die Datei `infos-an-alle.txt` mit beliebigem Inhalt in diesem Verzeichnis als Benutzer `karl`.
+
+== Übung 4
+
+Erstellt eine leere Datei mit dem Namen `emptyfile`. _Leert_ nun die
+Berechtigungen für die Datei mit dem Kommando `chmod 000 emptyfile`.
+
+a) Was passiert, wenn ihr die Berechtigungen ändert, aber nur *einen* Wert im
+_numerischen Modus_ bzw. _oktalen Modus_ an `chmod` übergebt, wie z.B. `chmod 4 emptyfile`?
+
+b) Was passiert, wenn ihr zwei Werte übergebt, z.B. `chmod 44 emptyfile`?
+
+c) Was lernt ihr daraus, wie `chmod` die numerischen Werte liest/verarbeitet?
+
+d) Kann man eine Datei ausführen welche das Ausführungsbit gesetzt hat, aber
+keine Leseberechtigung (`--x`)? Warum oder warum nicht?
