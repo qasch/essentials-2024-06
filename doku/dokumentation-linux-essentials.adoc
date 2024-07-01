@@ -458,4 +458,113 @@ Beispiel:
 
  /tmp
 
+== Archivierung und Komprimierung
+
+Archivierung und Komprimierung sind grundsätzlich zwei voneinander verschiedenen Aktionen. Sie werden auf vielen Systemen allerdings in einem Programm kombiniert (z.B. `rar`, `zip`, `7zip` unter Windows).
+
+Auf aktuellen Linux Systemen ist eine Version von `tar` enthalten, die beim *entpacken* eines komprimierten Archivs den verwendeten Algorithmus automatisch erkennt und selbstständig das entsprechende Kommando aufruft. 
+
+Auch beim Erstellen kann mit einem `tar` Befehl in einem Rutsch ein komprimiertes Archiv erstellt werden. Hier muss allerdings der gewünschte Algorithmus explizit angegeben werden.
+
+=== Archivierung
+
+Mehrere Dateien werden zu einer einzigen Datei zusammengefasst.
+
+`tar` kann in drei Syntax-Modi verwendet werden: 
+
+* traditionelle Syntax (Angabe Kurzoptionen ohne führendem `-`: `c`)
+* UNIX Syntax (Angabe Kurzoption mit führendem `-`: `-c`)
+* GNU Syntax (Angabe Langoptionen mit führenden `--`: `--create`)
+
+Einige der wichtigsten Optionen:
+
+* `-c` `--create`: Archiv erstellen
+* `-x` `--extract`: Archiv entpacken
+* `-f` `--file`: Angabe Dateiname
+* `-v` `--verbose`: gesprächige Ausgabe
+* `-t` `--list`: Inhalt des Archivs anzeigen
+
+Beispiele:
+
+Archiv aus den Dateien datei1.txt datei2.txt datei3.txt mit Namen dateien.tar
+
+ tar -cvf dateien.tar datei1.txt datei2.txt datei3.txt
+
+Archiv im aktuellen Verzeichnis entpacken
+
+ tar -xvf dateien.tar
+
+alle Dateien in /etc archivieren
+
+ tar -cvf etc.tar /etc
+ 
+==== Weitere hilfreiche Optionen für `tar`:
+
+Inhalt des Archivs auflisten:
+
+ tar -tf archive.tar
+
+Eine Datei ans Ende eines Archivs anhängen:
+
+ tar -rf archive.tar some_file
+
+Nur neue Dateien am Ende des Archiv anhängen:
+
+ tar -rf archive.tar updated_file
+
+Vor dem Entpacken in ein Verzeichnis wechseln:
+
+ tar -xvJf archive.xz -C /srv
+
+== Komprimierung
+
+Eine einzelne Datei wird mit einem bestimmten Algorythmus "klein gerechnet", d.h. ihre Größe ist im Nachhinein geringer. Die Größenersparnis kommt auf den verwendeten Komprimierungsalgorythmus an. 
+
+Alle unten genannten Komprimierungsalgorithmen funktionieren syntaktisch nach dem gleichen Prinzip:
+
+ gzip datei.txt
+ # Ergebnis:
+ datei.txt.gz   (Original ist nicht mehr vorhanden)
+
+ gunzip datei.txt.gz
+ gzip -d datei.txt.gz    # gleich wie oben
+ # Ergebnis:
+ datei.txt      (komprimierte Datei ist nicht mehr vorhanden)
+
+Beim Komprimieren und Dekomprimieren werden die Quelldateien überschrieben/gelöscht. Dies kann z.B. mit der Option `-c` verhindert werden. 
+
+Es ist egal, ob beim Dekomprimieren die Option `-d` oder der Suffix `un` (`gunzip`, `bunzip2`, `unxz`) verwendet wird.
+
+Bei allen Algorithmen kann ein _Preset_ (`-0` bis `-9` ausgewählt werden). Mehr dazu in den Manpages.
+
+=== gzip
+
+Schnelle Komprimierung, geringe Kompressionsrate.
+
+Option in bei Verwendung von `tar`: `-z`
+
+Der Inhalt komprimierter Dateien kann mit `zcat` und `zless` angezeigt werden ohne die Datei dekomprimieren zu müssen
+
+=== bzip2
+
+Langsame Komprimierung, hohe Kompressionsrate.
+
+Option in bei Verwendung von `tar`: `-j`
+
+Der Inhalt komprimierter Dateien kann mit `bzcat` und `bzless` angezeigt werden ohne die Datei dekomprimieren zu müssen
+
+=== xz
+
+Langsame Komprimierung, schnelle Dekomprimierung, relativ gute Kompressionsrate.
+
+Option in bei Verwendung von `tar`: `-J`
+
+Der Inhalt komprimierter Dateien kann mit `xzcat` und `xzless` angezeigt werden ohne die Datei dekomprimieren zu müssen
+
+=== Beispiele
+
+ tar -cvzf archive.tar.gzip /etc     # gzip
+ tar -cvjf archive.tar.bzip2 /etc    # bzip2
+ tar -cvJf archive.tar.xz /etc	     # xz
+
 
