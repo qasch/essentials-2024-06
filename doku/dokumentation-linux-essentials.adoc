@@ -383,5 +383,79 @@ Gruppenzugehörigkeiten werden erst aktiv, wenn sich der Benutzer einmal komplet
 
  chown user:group <datei>
 
+== Dateibereichtungen
+
+ r : read 
+ w : write
+ x : execute
+
+ User Group Others
+ rw-  r--   r--
+
+== Berechtigungen setzen
+
+=== Symbolische Rechtevergabe
+
+ chmod g+w <datei>   # Schreibrecht für Gruppe hinzufügen
+
+ chmod u-w <datei>   # Schreibrecht für User entziehen
+
+ chmod go-rx <datei>   # Schreibrecht und Ausführungsrecht für Others und Gruppe entziehen
+
+ chmod u=rwx <datei>  # alle Rechte für Owner setzen
+
+=== Oktale/Numerische Rechtevergabe
+
+ r : read     4
+ w : write    2
+ x : execute  1
+
+       ugo
+ chmod 220 <datei>  u=w,g=w
+ chmod 620 <datei>  u=rw,g=w
+
+
+ Okt.   Bin.
+
+ 1      001
+ 2      010
+ 4      100 
+
+  7  6  4
+ 111110100
+ rwxrw-r--
+
+=== Standardberechtigungen
+
+* auf Datei: 644
+* auf Verzeichnis: 755
+
+=== Sonderbits
+
+==== SUID Bit 
+
+Auf eine ausführbare Binärdatei gesetzt, bewirkt das SUID-Bit, dass die Datei mit den Berechtigungen des Besitzers (und nicht den Berechtigungen des aufrufenden Benutzers) ausgeführt wird.
+
+Beispiel:
+
+ /usr/bin/passwd
+
+==== SGID Bit 
+
+Auf eine ausführbare Binärdatei ähnlich wie das SUID-Bit, nur dass die Datei mit den Berechtigungen der Gruppe ausgeführt wird.
+
+Auf ein Verzeichnis angewendet, sorgt das SGID-Bit dafür, dass darin neu erstellte Dateien der Gruppe des Verzeichnisses zugeordnet werden, nicht der initialien Gruppe des Benutzers, der die Datei erstellt.
+
+Beispiel:
+
+ /var/mail
+
+==== Sticky Bit
+
+Auf ein Verzeichnis gesetzt, sorgt es dafür, dass nur der Besitzer einer Datei diese ändern oder löschen darf.
+
+Beispiel:
+
+ /tmp
 
 
