@@ -288,9 +288,100 @@ Die PID eines Prozesses kann auf mehrere Arten ermittelt werden:
 - `pkill`: analog zu oben, `pkill` erwartet aber den Namen bzw. einen Teil des Namens eines Prozesses anstatt der PID. Falls mehere Prozesse auf den Namen passen, wird das Signal an *alle* diese Prozesse gesendet.
 - `killall` auf neueren Distributionen nicht mehr vorhanden, ähnliches Verhalten wie `pkill`
 
+== Dateisystembaum unter Linux
 
+Filesystem Hierarchy Standard - FHS: Eine Empfehlung an alle Distributionen, wie der Dateisystembaum unter UNIX/Linux aufgebaut sein sollte.
 
+- `/bin`: common executables available for everyone, `ex. cp rm ls`
+- `/boot`: kernel and boot configuration, initial ramdisk, kernel image
+- `/dev`: files which point to both physical and pseudo devices, populated by `udev`
+- `/etc`: systemwide configuration files
+- `/home`: non-root user home directories
+- `/lib`: library files used by the system, include `.so` files and others
+- `/lib32`: library files used by the system, include `.so` files and others
+- `/lib64`: library files used by the system, include `.so` files and others
+- `/lost+found`: saved files due to failure, not relevant for users, just for the system
+- `/media`: auto-mounting place for certain external devices on some distros
+- `/mnt`: place to mount various file systems
+- `/opt`: various software, not installed by package manager
+- `/proc`: virtual filesystem (`procfs`) for resources, processes, and more, only in memory, not actual files on hard disk
+- `/root`: root user home directory
+- `/sbin`: similar to `/bin`, but for system administrators, ex. `fdisk`
+- `/tmp`: temporary file storage, wiped out after reboot
+- `/usr`: user programs, library files, docs, etc.
+- `/var`: variable files for various purposes, ex. logs, tz data, files for webserver (debian)
+- `/vmlinuz`: boot/vmlinuz-4.15.0-43-generic: compressed linux kernel 
 
+=== weitere wichtige Verzeichnisse (nicht Bestandteil des FHS)
+
+- `/sys`: virtual filesystem (`sysfs`), extension to `/proc`
+- `/run`: virtual filesystem, was under `/var/run` (symlinked) before, applications can store data needed to operate, e.g. `.lock` files
+
+== Benutzer und Gruppen
+
+Es gibt zwei Arten von Benutzern:
+* Systembenutzer/Pseudobenutzer
+* Reale Benutzer
+
+=== Dateien der Benutzerverwaltung
+
+* `/etc/passwd`: Liste aller Benutzer auf dem System, tabellarischer Aufbau, Manpage `man 5 passwd`, von allen lesbar
+* `/etc/shadow`: Passwörter der Benutzer, gesaltet und gehasht, Ablaufdaten der Passwörter
+* `/etc/group`: Liste aller Gruppen und deren Mitglieder
+* `/etc/gshadow`: Passwörter für Gruppen, wird eigentlich nicht verwendet
+
+=== Benutzer anlegen
+
+ useradd karl
+  
+Obiges Kommando erzeugt den Benutzer `karl`, es wird jedoch kein Heimatverzeichnis erstellt und die Shell ist die `/bin/sh`
+
+Mit folgendem Kommando wird der Benutzer `tux` mit eigenem Heimatverzeichnis und darin enthaltener Standarddateien (Kopie von `/etc/skel`) erzeugt, im Kommentarfeld der Name `Tux Tuxedo` und der BASH als Login Shell:
+
+ useradd -m -c 'Tux Tuxedo' -s /bin/bash tux
+
+Anschließend muss mit dem Kommando `passwd tux` noch ein Passwort für `tux` erstellt werden.
+
+Das interaktive Kommando `adduser` unter Debian ist ein Wrapper um `useradd`, welches zusätzlich ein Passswort erstellt.
+
+=== Benutzer ändern
+
+Mit dem Kommando `usermod` können Eigenschaften von Benutzern geändert werden. Die Optionen sind sehr ähnlich zu `useradd`.
+
+=== Gruppen anlegen
+
+Gruppe `gfn` erzeugen:
+
+ groupadd gfn
+
+Benutzer `tux` der Gruppe `gfn` hinzufügen:
+
+ usermod -aG gfn tux
+
+Wichtig ist hier das `-a`, ansonsten werden alle anderen Gruppenzugehörigkeiten von `tux` gelöscht.
+
+Gruppenzugehörigkeiten werden erst aktiv, wenn sich der Benutzer einmal komplett vom System ab- und wieder angemeldet hat.
+
+=== Benutzer wechseln
+
+`su tux`: Wechselt in den Benutzeraccount von `tux`, Umgegung (env, Variablen etc.) werden teilweise neu gesetzt. 
+`su - tux`: wie oben, es werden aber alle Umgebungsvariablen neu gesetzt ("echte" Login Shell)
+`su -l tux`: wie oben
+`su --login tux`: wie oben
+
+=== Besitzer ändern
+
+ chown user <datei>
+
+=== Gruppe ändern
+
+ chgrp group <datei>
+
+ chown :group <datei>
+
+=== Besitzer und Gruppe ändern
+
+ chown user:group <datei>
 
 
 
