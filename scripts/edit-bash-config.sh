@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # "Debugging" einschalten
-set -x
+# set -x
 
 # Variablen
 
@@ -11,6 +11,7 @@ rootconfig="/etc/bash.bashrc"
 # If-Verzweigungen (Kommando test: man test)
 if test $# -ge 1; then
   echo Das Skript akzeptiert keine Argumente
+  exit 1
 fi
 
 # Ist der aufrufende Benutzer root?
@@ -41,8 +42,12 @@ elif [[ $UID =~ [0-9]{4} ]]; then   # Vergleich, hier müssen Leerzeichen stehen
   fi
 
 else 
-  echo Du bist weder root noch tux
+  echo Du bist weder root noch ein regulärer Benutzer
+  exit 2
 fi
+
+# Skript ordnungsgemäß beenden
+exit 0
 
 
 
