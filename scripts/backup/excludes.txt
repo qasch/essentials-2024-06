@@ -1,0 +1,7 @@
+.lesshst
+.viminfo
+.swp
+.*.swp
+.local
+backup/*.tar*
+

@@ -1,0 +1,6 @@
+# Variables
+
+dirs_to_backup="$HOME"
+path_to_backup_dir="${HOME}/backup"
+exclude_file="excludes.txt"
+logfile="backup.log"
