@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+#set -x
+
 # Configdatei einlesen
 source config.txt
 
@@ -7,13 +9,14 @@ timestamp=$(date +%Y%m%d-%H%M)
 logfile="$path_to_backup_dir/backup_$timestamp.log"
 
 # Prüfen, ob Verzeichnis existiert, ansonsten erstellen
-mkdir -vp $path_to_backup_dir >> $logfile
+# NOTE: Redirect hier noch nicht möglich, "echtes" Logging verwenden
+mkdir -vp $path_to_backup_dir 
 
-echo --- Backup Script gestartet: $(date "+%Y%m%d %H:%M.%S") --- >> $logfile
+echo --- Backup Script gestartet: $(date "+%Y%m%d %H:%M.%S") --- | tee -a $logfile
 
-tar -cvjf ${path_to_backup_dir}/backup_$timestamp.tar.bz2 --exclude-from=$exclude_file $dirs_to_backup &>> $logfile
+tar -cvjf ${path_to_backup_dir}/backup_$timestamp.tar.bz2 --exclude-from=$exclude_file $dirs_to_backup 2>&1 | tee -a $logfile
 
-echo --- Backup Script beendet: $(date "+%Y%m%d %H:%M.%S") --- >> $logfile
+echo --- Backup Script beendet: $(date "+%Y%m%d %H:%M.%S") --- | tee -a $logfile
 
 
 # TODO:
